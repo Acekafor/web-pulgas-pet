@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Revisa tu orden por unidades y envíala por WhatsApp a Pulgas Pet. Recoges y pagas en la tienda.">
+  <title>Mi orden · Pulgas Pet</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/componentes.css">
+  <link rel="stylesheet" href="assets/css/paginas.css">
+</head>
+<body data-pagina="orden">
+  <div class="top">
+    <div id="hdr"></div>
+    <div class="wrap">
+      <h1>Mi orden</h1>
+      <p>Ajusta las unidades y envía tu orden por WhatsApp. Pasas a recogerla y pagas en la tienda.</p>
+    </div>
+  </div>
+
+  <main class="sec">
+    <div class="wrap cols">
+      <!-- La lista se pinta desde assets/js/orden.js -->
+      <div id="orden"></div>
+      <form class="form" id="orden-form" hidden>
+        <input name="nombre" placeholder="Tu nombre" required aria-label="Tu nombre">
+        <textarea name="nota" rows="3" placeholder="Notas: peso de tu mascota, tamaño, etc. (opcional)" aria-label="Notas"></textarea>
+        <button class="btn v">Enviar orden por WhatsApp</button>
+        <button type="button" class="btn o" id="vaciar">Vaciar orden</button>
+        <p class="nota-p">Las órdenes están sujetas a disponibilidad; te confirmamos por WhatsApp. Los precios se confirman en la tienda al momento de pagar.</p>
+      </form>
+    </div>
+  </main>
+
+  <div id="ftr"></div>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
