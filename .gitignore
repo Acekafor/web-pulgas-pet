@@ -1,0 +1,19 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Dependencias y logs (por si luego se agrega algo de Node)
+node_modules/
+*.log
+
+# Variables locales
+.env
+.env.*
+
+# Temporales
+*.tmp
+~$*.docx
