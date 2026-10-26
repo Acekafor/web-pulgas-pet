@@ -1,0 +1,57 @@
+/* Componentes reutilizables */
+
+/* Espacios de imagen */
+.slot {
+  display: grid; place-items: center; text-align: center; padding: 0.5rem; overflow: hidden; width: 100%;
+  border: 2px dashed var(--nar); border-radius: var(--r); color: var(--osc); font: 700 0.75rem/1.35 ui-monospace, monospace;
+  background: repeating-linear-gradient(45deg, #fff8ea, #fff8ea 10px, #ffe9c4 10px, #ffe9c4 20px);
+}
+.slot.ok { border: 0; padding: 0; background: none; }
+.slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.slot.sm { width: 44px; height: 44px; border-radius: 50%; padding: 0; font-size: 1rem; }
+.sq { aspect-ratio: 1; }
+.wide { aspect-ratio: 16 / 9; }
+.tall { aspect-ratio: 3 / 4; }
+.rd { aspect-ratio: 1; border-radius: 50%; }
+
+/* Tarjeta de producto */
+.prod { display: flex; flex-direction: column; gap: 0.35rem; }
+.prod h3 { font-size: 1.15rem; margin: 0.3rem 0 0; }
+.prod small { color: var(--gris); font-weight: 700; }
+.prod .pie { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-top: auto; }
+.prod select, .form input, .form textarea, .buscar input { font: inherit; }
+.prod select { width: 100%; border: 2px solid #e3d6bb; border-radius: 12px; padding: 0.45rem 0.6rem; background: #fff; }
+.vars { margin: 0; font-size: 0.85rem; line-height: 1.4; color: var(--gris); }
+
+/* Selector de unidades */
+.cant { display: inline-flex; align-items: center; border: 2px solid var(--ver); border-radius: 99px; overflow: hidden; background: #fff; }
+.cant button { border: 0; background: #fff; color: var(--osc); font: 800 1.1rem Nunito, sans-serif; width: 34px; height: 34px; cursor: pointer; }
+.cant button:hover { background: var(--cre); }
+.cant output { min-width: 2.2ch; text-align: center; font-weight: 800; }
+
+/* Buscador y filtros */
+.buscar { display: flex; max-width: 460px; background: #fff; border-radius: 99px; box-shadow: 0 2px 10px #0002; margin: 1rem 0; }
+.buscar input { flex: 1; min-width: 0; border: 0; background: none; padding: 0.8rem 1.2rem; border-radius: 99px; }
+.buscar button { border-radius: 99px; margin: 4px; }
+.filtros { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+.filtros button { border: 2px solid var(--ver); background: #fff; color: var(--osc); font: 800 0.95rem Nunito, sans-serif; padding: 0.4rem 1rem; border-radius: 99px; cursor: pointer; }
+.filtros button.on { background: var(--ver); color: #fff; }
+
+/* Lista de la orden */
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.8rem; }
+.lista li { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; background: var(--cre); border-radius: var(--r); padding: 0.8rem 1rem; }
+.lista li > div:first-child { flex: 1; }
+.quitar { border: 0; background: none; font-size: 1.1rem; cursor: pointer; color: var(--nar); }
+
+/* Formularios */
+.form { display: grid; gap: 0.8rem; }
+.form input, .form textarea { width: 100%; border: 2px solid #e3d6bb; border-radius: 14px; padding: 0.7rem 1rem; }
+.nota-p { font-size: 0.9rem; color: var(--gris); margin: 0; }
+.vacio { padding: 2rem; text-align: center; font-weight: 700; }
+
+/* Horario */
+.horario { border-collapse: collapse; width: 100%; max-width: 380px; margin: 1.5rem 0 0; }
+.horario caption { text-align: left; font: 800 1.3rem "Baloo 2", sans-serif; color: var(--osc); padding-bottom: 0.4rem; }
+.horario td { padding: 0.4rem 0.6rem; border-bottom: 1px solid #eadfc8; }
+.horario td:last-child { text-align: right; font-weight: 700; }
+.horario tr.hoy { background: var(--cre); color: var(--osc); font-weight: 800; }
