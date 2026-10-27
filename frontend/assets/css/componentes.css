@@ -72,5 +72,8 @@
   .filtros button { flex: none; white-space: nowrap; }
   .prod .btn { padding: 0.5rem 1rem; }
   .lista li { flex-wrap: wrap; }
-  .buscar { max-width: 100%; }
+  .buscar { max-width: 100%; margin: 0.8rem 0; padding: 2px; }
+  .buscar input { padding: 0.6rem 0.8rem; font-size: 0.9rem; }
+  .buscar button { padding: 0.45rem 0.9rem; font-size: 0.88rem; margin: 2px; }
+  .slot.tall { aspect-ratio: 16 / 9; max-height: 220px; }
 }
