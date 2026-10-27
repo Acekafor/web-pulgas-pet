@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Contacta a Pulgas Pet por WhatsApp. Calle 14 # 79G, Local 3, barrio Visión de Colombia, Bogotá. Consulta nuestro horario de atención.">
+  <title>Contacto · Pulgas Pet</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/componentes.css">
+  <link rel="stylesheet" href="assets/css/paginas.css">
+</head>
+<body data-pagina="contacto">
+  <div class="top">
+    <div id="hdr"></div>
+    <div class="wrap">
+      <h1>Contacto</h1>
+      <p>Escríbenos y reserva tus productos para recogerlos en la tienda.</p>
+    </div>
+  </div>
+
+  <main class="sec">
+    <div class="wrap cols">
+      <div>
+        <h2>Pide por WhatsApp</h2>
+        <form class="form" id="form-wa">
+          <input name="nombre" placeholder="Tu nombre" required aria-label="Tu nombre">
+          <textarea name="mensaje" rows="4" placeholder="¿Qué producto necesitas?" required aria-label="Mensaje"></textarea>
+          <button class="btn v">Enviar por WhatsApp</button>
+        </form>
+        <!-- Se llena desde TIENDA.horario en assets/js/config.js -->
+        <div id="horario"></div>
+      </div>
+      <div>
+        <h2>Visítanos</h2>
+        <p>Calle 14 # 79G, Local 3<br>Barrio Visión de Colombia, Bogotá<br>Domicilios: 310 264 5203</p>
+        <div class="slot wide" data-img="assets/img/banners/mapa-tienda.png" data-desc="Captura del mapa con la ubicación de la tienda"></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="ftr"></div>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
