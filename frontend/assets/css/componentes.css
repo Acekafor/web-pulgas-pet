@@ -55,3 +55,22 @@
 .horario td { padding: 0.4rem 0.6rem; border-bottom: 1px solid #eadfc8; }
 .horario td:last-child { text-align: right; font-weight: 700; }
 .horario tr.hoy { background: var(--cre); color: var(--osc); font-weight: 800; }
+
+/* Adaptación a pantallas táctiles y pequeñas */
+.btn { display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+.prod .pie { flex-wrap: wrap; }
+.prod > * { min-width: 0; }
+
+@media (pointer: coarse) {
+  .cant button { width: 44px; height: 44px; }
+  .btn, .filtros button { min-height: 44px; }
+  .quitar { min-width: 44px; min-height: 44px; }
+}
+
+@media (max-width: 520px) {
+  .filtros { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.4rem; scrollbar-width: thin; }
+  .filtros button { flex: none; white-space: nowrap; }
+  .prod .btn { padding: 0.5rem 1rem; }
+  .lista li { flex-wrap: wrap; }
+  .buscar { max-width: 100%; }
+}
