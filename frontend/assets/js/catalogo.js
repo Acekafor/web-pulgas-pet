@@ -53,8 +53,8 @@ export async function obtenerProductos() {
       return (await r.json()).filter((p) => p.disponible !== false);
     }
     if (CATALOGO.csvUrl) {
-      const r = await fetch(CATALOGO.csvUrl);
-      if (!r.ok) throw new Error(`Sheets ${r.status}`);
+      const r = await fetch(CATALOGO.csvUrl, { cache: "no-store" });
+            if (!r.ok) throw new Error(`Sheets ${r.status}`);
       return desdeCSV(await r.text());
     }
   } catch (e) {
