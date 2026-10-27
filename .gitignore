@@ -17,3 +17,17 @@ node_modules/
 # Temporales
 *.tmp
 ~$*.docx
+
+# Dependencias de Node
+node_modules/
+npm-debug.log*
+
+# Archivos de sistema y del entorno
+.DS_Store
+Thumbs.db
+*.zip
+.env
+
+# Directorios de compilación o pruebas
+dist/
+coverage/
