@@ -32,3 +32,9 @@ jobs:
 
       - name: Ejecutar Pruebas Unitarias
         run: npm run test:unit
+
+      - name: Instalar navegadores de Playwright
+        run: npx playwright install --with-deps
+
+      - name: Ejecutar Pruebas E2E (Playwright)
+        run: npm run test:e2e
