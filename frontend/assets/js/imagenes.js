@@ -13,6 +13,8 @@ export function activarImagenes(raiz = document) {
       : `<span>📷 ${esc(s.dataset.desc || "Imagen")}<br><b>${esc(ruta)}</b></span>`;
     const im = new Image();
     im.alt = s.dataset.desc || "";
+    im.loading = "lazy";
+    im.decoding = "async";
     im.onload = () => {
       s.classList.add("ok");
       s.innerHTML = "";
