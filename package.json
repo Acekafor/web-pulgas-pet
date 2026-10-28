@@ -10,12 +10,14 @@
     "format:check": "prettier --check \"frontend/**/*.{js,css,html}\"",
     "format": "prettier --write \"frontend/**/*.{js,css,html}\"",
     "test:unit": "node --test tests/unit/*.test.js",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "convert:webp": "node scripts/convertir-webp.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "sharp": "^0.33.2"
   }
 }
