@@ -8,7 +8,7 @@ on:
 
 jobs:
   calidad-codigo:
-    name: Verificación de Calidad y Formato
+    name: Verificación de Calidad, Formato y Pruebas
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,6 @@ jobs:
 
       - name: Verificar Formato (Prettier)
         run: npm run format:check
+
+      - name: Ejecutar Pruebas Unitarias
+        run: npm run test:unit
