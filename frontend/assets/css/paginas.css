@@ -1,36 +1,151 @@
 /* Secciones propias de cada página */
 
 /* Portada */
-.hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; align-items: center; padding-block: 1rem; }
-.hero > * { min-width: 0; }
-.hero p { max-width: 46ch; }
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; font-weight: 700; color: var(--osc); }
-.strip { margin-top: -40px; padding: calc(40px + 1.2rem) 0 1.2rem; background: var(--osc); color: #fff; }
-.strip .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center; }
-.strip b { display: block; font: 800 1.5rem "Baloo 2", sans-serif; color: #ffd27a; }
-.frase { display: grid; grid-template-columns: 1fr 1.2fr; gap: 1.5rem; align-items: center; }
-.frase blockquote { margin: 0; font: italic 700 1.3rem/1.4 "Baloo 2", sans-serif; color: var(--osc); text-align: center; }
-.nosot { background: var(--cre); }
-.trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; align-items: stretch; }
-.card-v { background: var(--osc); color: #fff; border-radius: var(--r); padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; gap: 0.8rem; }
-.card-v h3 { color: #ffd27a; margin: 0; }
-.cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
-.cats a { text-align: center; font: 800 1.05rem "Baloo 2", sans-serif; color: var(--osc); text-decoration: none; display: flex; flex-direction: column; gap: 0.5rem; }
-.promo { width: calc(100% - 2rem); max-width: 1068px; background: var(--osc); color: #fff; border-radius: var(--r); display: grid; grid-template-columns: 1fr 1.3fr; gap: 1.5rem; align-items: center; padding: 1.5rem; }
-.promo h2 { color: #ffd27a; font-size: clamp(1.8rem, 5vw, 2.8rem); }
-.benef { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; text-align: center; font-weight: 800; color: var(--osc); }
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  padding-block: 1rem;
+}
+.hero > * {
+  min-width: 0;
+}
+.hero p {
+  max-width: 46ch;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  font-weight: 700;
+  color: var(--osc);
+}
+.strip {
+  margin-top: -40px;
+  padding: calc(40px + 1.2rem) 0 1.2rem;
+  background: var(--osc);
+  color: #fff;
+}
+.strip .wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  text-align: center;
+}
+.strip b {
+  display: block;
+  font:
+    800 1.5rem "Baloo 2",
+    sans-serif;
+  color: #ffd27a;
+}
+.frase {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+.frase blockquote {
+  margin: 0;
+  font:
+    italic 700 1.3rem/1.4 "Baloo 2",
+    sans-serif;
+  color: var(--osc);
+  text-align: center;
+}
+.nosot {
+  background: var(--cre);
+}
+.trio {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+.card-v {
+  background: var(--osc);
+  color: #fff;
+  border-radius: var(--r);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.8rem;
+}
+.card-v h3 {
+  color: #ffd27a;
+  margin: 0;
+}
+.cats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+.cats a {
+  text-align: center;
+  font:
+    800 1.05rem "Baloo 2",
+    sans-serif;
+  color: var(--osc);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.promo {
+  width: calc(100% - 2rem);
+  max-width: 1068px;
+  background: var(--osc);
+  color: #fff;
+  border-radius: var(--r);
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.5rem;
+}
+.promo h2 {
+  color: #ffd27a;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+}
+.benef {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+  text-align: center;
+  font-weight: 800;
+  color: var(--osc);
+}
 
 @media (max-width: 860px) {
-  .hero, .frase, .promo { grid-template-columns: 1fr; gap: 1.2rem; }
-  .hero .slot { aspect-ratio: 16 / 9; max-height: 220px; }
+  .hero,
+  .frase,
+  .promo {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .hero .slot {
+    aspect-ratio: 16 / 9;
+    max-height: 220px;
+  }
 }
 
 @media (max-width: 760px) {
-  .trio { grid-template-columns: 1fr; }
-  .trio .slot { aspect-ratio: 4 / 3; }
-  .promo { padding: 1.2rem; }
+  .trio {
+    grid-template-columns: 1fr;
+  }
+  .trio .slot {
+    aspect-ratio: 4 / 3;
+  }
+  .promo {
+    padding: 1.2rem;
+  }
 }
 
 @media (max-width: 520px) {
-  .chips { gap: 0.4rem 0.8rem; font-size: 0.85rem; }
+  .chips {
+    gap: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
 }

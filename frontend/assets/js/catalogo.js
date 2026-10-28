@@ -8,19 +8,33 @@ import { agregar } from "./orden.js";
 
 function parseCSV(texto) {
   const filas = [];
-  let fila = [], celda = "", comillas = false;
+  let fila = [],
+    celda = "",
+    comillas = false;
   for (let i = 0; i < texto.length; i++) {
     const c = texto[i];
     if (comillas) {
       if (c === '"') {
-        if (texto[i + 1] === '"') { celda += '"'; i++; } else comillas = false;
+        if (texto[i + 1] === '"') {
+          celda += '"';
+          i++;
+        } else comillas = false;
       } else celda += c;
     } else if (c === '"') comillas = true;
-    else if (c === ",") { fila.push(celda); celda = ""; }
-    else if (c === "\n") { fila.push(celda); filas.push(fila); fila = []; celda = ""; }
-    else if (c !== "\r") celda += c;
+    else if (c === ",") {
+      fila.push(celda);
+      celda = "";
+    } else if (c === "\n") {
+      fila.push(celda);
+      filas.push(fila);
+      fila = [];
+      celda = "";
+    } else if (c !== "\r") celda += c;
   }
-  if (celda || fila.length) { fila.push(celda); filas.push(fila); }
+  if (celda || fila.length) {
+    fila.push(celda);
+    filas.push(fila);
+  }
   return filas;
 }
 
@@ -35,7 +49,12 @@ function desdeCSV(texto) {
       id: slug(o.nombre),
       nombre: o.nombre,
       categoria: o.categoria || "Otros",
-      presentaciones: o.presentaciones ? o.presentaciones.split(";").map((v) => v.trim()).filter(Boolean) : [],
+      presentaciones: o.presentaciones
+        ? o.presentaciones
+            .split(";")
+            .map((v) => v.trim())
+            .filter(Boolean)
+        : [],
       nota: o.nota,
       imagen: CATALOGO.rutaImagenes + (o.imagen || `${slug(o.nombre)}.jpg`),
       destacado: norm(o.destacado) === "si",
@@ -54,7 +73,7 @@ export async function obtenerProductos() {
     }
     if (CATALOGO.csvUrl) {
       const r = await fetch(CATALOGO.csvUrl, { cache: "no-store" });
-            if (!r.ok) throw new Error(`Sheets ${r.status}`);
+      if (!r.ok) throw new Error(`Sheets ${r.status}`);
       return desdeCSV(await r.text());
     }
   } catch (e) {
@@ -126,24 +145,40 @@ export function iniciarCatalogo(productos, categorias) {
     filtros.innerHTML = ["Todos", ...categorias]
       .map((c) => `<button type="button" class="${c === cat ? "on" : ""}">${esc(c)}</button>`)
       .join("");
-    pintar(caja, productos.filter((p) => (cat === "Todos" || p.categoria === cat) && norm(p.nombre).includes(texto)));
+    pintar(
+      caja,
+      productos.filter(
+        (p) => (cat === "Todos" || p.categoria === cat) && norm(p.nombre).includes(texto)
+      )
+    );
   };
   filtros.onclick = (e) => {
-    if (e.target.tagName === "BUTTON") { cat = e.target.textContent; dibujar(); }
+    if (e.target.tagName === "BUTTON") {
+      cat = e.target.textContent;
+      dibujar();
+    }
   };
-  buscador.oninput = () => { texto = norm(buscador.value); dibujar(); };
+  buscador.oninput = () => {
+    texto = norm(buscador.value);
+    dibujar();
+  };
   dibujar();
 }
 
 // Página index.html: destacados y categorías
 export function iniciarInicio(productos, categorias) {
   const destacados = $("#destacados");
-  if (destacados) pintar(destacados, productos.filter((p) => p.destacado));
+  if (destacados)
+    pintar(
+      destacados,
+      productos.filter((p) => p.destacado)
+    );
   const cats = $("#categorias");
   if (cats) {
     cats.innerHTML = categorias
       .map(
-        (n, i) => `<a href="catalogo.html?cat=${encodeURIComponent(n)}"><div class="slot rd" data-img="assets/img/banners/categoria-${i + 1}.jpg" data-desc="Categoría: ${esc(n)}"></div>${esc(n)}</a>`
+        (n, i) =>
+          `<a href="catalogo.html?cat=${encodeURIComponent(n)}"><div class="slot rd" data-img="assets/img/banners/categoria-${i + 1}.jpg" data-desc="Categoría: ${esc(n)}"></div>${esc(n)}</a>`
       )
       .join("");
     activarImagenes(cats);

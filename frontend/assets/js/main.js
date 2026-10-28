@@ -11,7 +11,12 @@ import { obtenerProductos, categoriasDe, iniciarCatalogo, iniciarInicio } from "
 function encabezado() {
   const limpio = (s) => s.replace(".html", "");
   const actual = limpio(location.pathname.split("/").pop() || "index");
-  const links = [["index.html", "Inicio"], ["catalogo.html", "Catálogo"], ["nosotros.html", "Nosotros"], ["contacto.html", "Contacto"]];
+  const links = [
+    ["index.html", "Inicio"],
+    ["catalogo.html", "Catálogo"],
+    ["nosotros.html", "Nosotros"],
+    ["contacto.html", "Contacto"]
+  ];
   $("#hdr").innerHTML = `<div class="wrap"><header class="nav">
     <a class="logo" href="index.html"><span class="slot sm" data-img="assets/img/logo/logo-pulgas-pet.png" data-desc="Logo"></span>Pulgas Pet</a>
     <nav aria-label="Principal">${links.map(([h, t]) => `<a href="${h}"${limpio(h) === actual ? ' class="on"' : ""}>${t}</a>`).join("")}</nav>
@@ -41,7 +46,9 @@ async function iniciar() {
   actualizarContador();
 
   if ($("#catalogo") || $("#destacados") || $("#categorias")) {
-    $$("#catalogo, #destacados").forEach((e) => (e.innerHTML = '<p class="vacio">Cargando catálogo…</p>'));
+    $$("#catalogo, #destacados").forEach(
+      (e) => (e.innerHTML = '<p class="vacio">Cargando catálogo…</p>')
+    );
     const productos = await obtenerProductos();
     const categorias = categoriasDe(productos);
     iniciarInicio(productos, categorias);

@@ -1,38 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <meta name="description" content="Catálogo de Pulgas Pet: alimentos, snacks, juguetes, accesorios, ropa, camas, antipulgas y artículos de aseo para tu mascota.">
-  <title>Catálogo · Pulgas Pet</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/layout.css">
-  <link rel="stylesheet" href="assets/css/componentes.css">
-  <link rel="stylesheet" href="assets/css/paginas.css">
-</head>
-<body data-pagina="catalogo">
-  <div class="top">
-    <div id="hdr"></div>
-    <div class="wrap">
-      <h1>Catálogo</h1>
-      <p>Elige las unidades que necesitas y arma tu orden. La envías por WhatsApp, recoges y pagas en la tienda.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+    />
+    <meta
+      name="description"
+      content="Catálogo de Pulgas Pet: alimentos, snacks, juguetes, accesorios, ropa, camas, antipulgas y artículos de aseo para tu mascota."
+    />
+    <title>Catálogo · Pulgas Pet</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/componentes.css" />
+    <link rel="stylesheet" href="assets/css/paginas.css" />
+  </head>
+  <body data-pagina="catalogo">
+    <div class="top">
+      <div id="hdr"></div>
+      <div class="wrap">
+        <h1>Catálogo</h1>
+        <p>
+          Elige las unidades que necesitas y arma tu orden. La envías por WhatsApp, recoges y pagas
+          en la tienda.
+        </p>
+      </div>
     </div>
-  </div>
 
-  <main class="sec">
-    <div class="wrap">
-      <div class="buscar"><input id="buscar" placeholder="Busca un producto…" aria-label="Buscar producto"></div>
-      <div class="filtros" id="filtros" aria-label="Filtrar por categoría"></div>
-      <!-- Los productos se pintan aquí desde assets/js/catalogo.js -->
-      <div class="grid" id="catalogo"></div>
-    </div>
-  </main>
+    <main class="sec">
+      <div class="wrap">
+        <div class="buscar">
+          <input id="buscar" placeholder="Busca un producto…" aria-label="Buscar producto" />
+        </div>
+        <div class="filtros" id="filtros" aria-label="Filtrar por categoría"></div>
+        <!-- Los productos se pintan aquí desde assets/js/catalogo.js -->
+        <div class="grid" id="catalogo"></div>
+      </div>
+    </main>
 
-  <div id="ftr"></div>
-  <script type="module" src="assets/js/main.js"></script>
-</body>
+    <div id="ftr"></div>
+    <script type="module" src="assets/js/main.js"></script>
+  </body>
 </html>
