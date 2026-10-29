@@ -6,6 +6,18 @@ import { urlWhatsApp, activarEnlacesWhatsApp, iniciarFormularioContacto } from "
 import { actualizarContador, iniciarOrden } from "./orden.js";
 import { obtenerProductos, categoriasDe, iniciarCatalogo, iniciarInicio } from "./catalogo.js";
 
+/* ===== Registrar Service Worker (PWA) ===== */
+
+function registrarServiceWorker() {
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").catch((err) => {
+        console.warn("Error al registrar ServiceWorker:", err);
+      });
+    });
+  }
+}
+
 /* ===== Componentes de layout compartidos ===== */
 
 function encabezado() {
@@ -33,7 +45,7 @@ function pie() {
     <p class="c">© ${new Date().getFullYear()} Pulgas Pet · Catálogo digital</p></div></footer>`;
 }
 
-/* ===== Arranque (los módulos se ejecutan con el DOM ya cargado) ===== */
+/* ===== Arranque ===== */
 
 async function iniciar() {
   encabezado();
@@ -44,6 +56,7 @@ async function iniciar() {
   iniciarOrden();
   activarImagenes();
   actualizarContador();
+  registrarServiceWorker();
 
   if ($("#catalogo") || $("#destacados") || $("#categorias")) {
     $$("#catalogo, #destacados").forEach(
