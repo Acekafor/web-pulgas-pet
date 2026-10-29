@@ -1,8 +1,23 @@
 /*
+  # 1. Prevenir que el sitio sea embebido en iFrames externos (Clickjacking)
   X-Frame-Options: DENY
+
+  # 2. Forzar al navegador a respetar los tipos MIME de los archivos
   X-Content-Type-Options: nosniff
+
+  # 3. Proteger la privacidad de los enlaces salientes (WhatsApp, mapas, etc.)
   Referrer-Policy: strict-origin-when-cross-origin
 
+  # 4. Forzar conexiones HTTPS seguras por 1 año (HSTS)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # 5. Desactivar APIs del navegador no utilizadas por la app
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+  # 6. Content Security Policy (CSP): Restringir qué scripts y recursos pueden ejecutarse
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://docs.google.com https://google.com;
+
+# Caché para recursos estáticos
 /assets/img/*
   Cache-Control: public, max-age=31536000, immutable
 
