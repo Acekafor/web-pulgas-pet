@@ -8,7 +8,7 @@
     />
     <meta
       name="description"
-      content="Catálogo de Pulgas Pet: alimentos, snacks, juguetes, accesorios, ropa, camas, antipulgas y artículos de aseo para tu mascota."
+      content="Catálogo de Pulgas Pet: alimentos, snacks, juguetes, accesorios, antipulgas y artículos de aseo para tu mascota."
     />
     <title>Catálogo · Pulgas Pet</title>
     <link
@@ -40,12 +40,23 @@
 
     <main class="sec">
       <div class="wrap">
-        <div class="buscar">
-          <input id="buscar" placeholder="Busca un producto…" aria-label="Buscar producto" />
+        <!-- Barra alineada: Buscador + Filtro de Categorías -->
+        <div class="catalogo-toolbar">
+          <div class="buscar">
+            <span class="buscar-icon">🔍</span>
+            <input
+              id="buscar"
+              placeholder="Busca un producto por nombre o categoría…"
+              aria-label="Buscar producto"
+            />
+          </div>
+          <div class="filtros" id="filtros-cat" aria-label="Filtrar por categoría"></div>
         </div>
-        <div class="filtros" id="filtros" aria-label="Filtrar por categoría"></div>
+
         <!-- Los productos se pintan aquí desde assets/js/catalogo.js -->
-        <div class="grid" id="catalogo"></div>
+        <div class="grid" id="catalogo">
+          <p class="vacio">Cargando catálogo...</p>
+        </div>
       </div>
     </main>
 

@@ -4,7 +4,6 @@ import { $, $$, esc, norm } from "./utils.js";
 import { activarImagenes } from "./imagenes.js";
 import { agregar } from "./orden.js";
 
-// Parser de CSV a Objetos JavaScript
 function csvAObjetos(csvTexto) {
   const lineas = csvTexto.trim().split("\n");
   if (lineas.length < 2) return [];
@@ -16,7 +15,7 @@ function csvAObjetos(csvTexto) {
     const prod = {};
 
     cabeceras.forEach((col, idx) => {
-      let val = (valores[idx] || "").trim().replace(/^"|"$/g, "");
+      const val = (valores[idx] || "").trim().replace(/^"|"$/g, "");
       prod[col] = val;
     });
 
@@ -54,10 +53,8 @@ export function categoriasDe(productos) {
   return Array.from(cats).sort();
 }
 
-// Plantilla HTML de la tarjeta de producto
 function tarjetaProducto(p) {
   const precioFormateado = p.precio ? `$${p.precio.toLocaleString("es-CO")}` : "Consultar";
-  
   const esAgotado = p.agotado === true || p.agotado === "si" || p.disponible === false;
   const claseAgotado = esAgotado ? " prod-agotado" : "";
   const badgeAgotado = esAgotado ? '<span class="badge-agotado">Agotado</span>' : "";
@@ -65,8 +62,10 @@ function tarjetaProducto(p) {
     ? '<button class="btn btn-disabled" disabled>Agotado</button>'
     : `<button class="btn" data-add="${esc(p.id)}">Agregar</button>`;
 
-  const presentacionTexto = p.presentacion || (Array.isArray(p.presentaciones) ? p.presentaciones.join(", ") : "");
-  const descTexto = p.descripcion || p.nota || presentacionTexto || "";
+  const presLabel =
+    p.presentacion && p.presentacion.toLowerCase() !== "no"
+      ? `<span class="pres-badge">${esc(p.presentacion)}</span>`
+      : "";
 
   return `<article class="prod${claseAgotado}" data-id="${esc(p.id)}">
     <div class="slot" data-img="${esc(p.imagen || "")}" data-desc="${esc(p.nombre)}"></div>
@@ -74,7 +73,7 @@ function tarjetaProducto(p) {
     <div class="prod-body">
       <span class="cat">${esc(p.categoria)}</span>
       <h3>${esc(p.nombre)}</h3>
-      <p class="desc">${esc(descTexto)}</p>
+      ${presLabel}
       <div class="prod-foot">
         <span class="precio">${precioFormateado}</span>
         ${botonAccion}
@@ -96,7 +95,7 @@ export function iniciarCatalogo(productos, categorias) {
   const contCatalogo = $("#catalogo");
   if (!contCatalogo) return;
 
-  const contFiltros = $("#filtros-cat");
+  const contFiltros = $("#filtros-cat") || $("#filtros");
   if (contFiltros) {
     contFiltros.innerHTML = `<button class="chip on" data-cat="todas">Todas</button>${categorias
       .map((c) => `<button class="chip" data-cat="${esc(c)}">${esc(c)}</button>`)
@@ -110,15 +109,15 @@ export function iniciarCatalogo(productos, categorias) {
       : "todas";
 
     const filtrados = productos.filter((p) => {
-      const descBusqueda = p.descripcion || p.nota || "";
-      const coincideTexto = norm(p.nombre).includes(busqueda) || norm(descBusqueda).includes(busqueda);
+      const coincideTexto =
+        norm(p.nombre).includes(busqueda) || norm(p.descripcion || "").includes(busqueda);
       const coincideCat = catSeleccionada === "todas" || p.categoria === catSeleccionada;
       return coincideTexto && coincideCat;
     });
 
     contCatalogo.innerHTML = filtrados.length
       ? filtrados.map(tarjetaProducto).join("")
-      : '<p class="vacio">No se encontraron productos.</p>';
+      : '<p class="vacio">No se encontraron productos en esta categoría.</p>';
 
     activarImagenes(contCatalogo);
   }
@@ -126,7 +125,7 @@ export function iniciarCatalogo(productos, categorias) {
   $("#buscar")?.addEventListener("input", filtrar);
   contFiltros?.addEventListener("click", (e) => {
     if (e.target.classList.contains("chip")) {
-      $$(".chip", contFiltros).forEach((c) => c.classList.remove("on"));
+      $$(".chip", contFiltros, e.currentTarget).forEach((c) => c.classList.remove("on"));
       e.target.classList.add("on");
       filtrar();
     }
@@ -136,9 +135,8 @@ export function iniciarCatalogo(productos, categorias) {
     const btn = e.target.closest("[data-add]");
     if (btn) {
       const prod = productos.find((p) => p.id === btn.dataset.add);
-      const pres = prod.presentacion || (Array.isArray(prod.presentaciones) ? prod.presentaciones[0] : "");
       if (prod && !prod.agotado && prod.disponible !== false) {
-        agregar(prod, pres || "", 1);
+        agregar(prod, prod.presentacion || "", 1);
       }
     }
   });

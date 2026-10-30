@@ -27,7 +27,8 @@ export const CATEGORIAS = [
 ];
 
 // Enlace publicado de Google Sheets como CSV para el catálogo dinámico
-export const SHEET_URL = "https://docs.google.com/spreadsheets/d/1bJHgD95Dn-uJuLIU9fPQ-9u1Yg_RR5gq_XqSuAybkD4/export?format=csv";
+export const SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1bJHgD95Dn-uJuLIU9fPQ-9u1Yg_RR5gq_XqSuAybkD4/export?format=csv";
 
 // false = oculta rutas de prueba en las imágenes. Ponlo en false para producción.
 export const MOSTRAR_ETIQUETAS = true;

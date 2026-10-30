@@ -332,3 +332,189 @@
   cursor: not-allowed !important;
   border-color: #ccc !important;
 }
+
+/* --- BARRA DE HERRAMIENTAS DE CATÁLOGO --- */
+.catalogo-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background-color: #ffffff;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eef2f0;
+}
+
+.buscador-box {
+  position: relative;
+  flex: 1 1 240px;
+}
+
+.buscador-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.6rem;
+  font-size: 0.95rem;
+  border: 1.5px solid #dcdcdc;
+  border-radius: 24px;
+  outline: none;
+  background-color: #fafafa;
+}
+
+.buscador-box input:focus {
+  border-color: #2b6e44;
+  background-color: #ffffff;
+}
+
+.buscador-box .buscar-icon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+}
+
+.filtros-categorias {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 2 1 320px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.chip {
+  white-space: nowrap;
+  background-color: #f0f4f1;
+  color: #333;
+  border: 1px solid #d5e0d8;
+  padding: 0.45rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chip:hover {
+  background-color: #e2ebe4;
+}
+
+.chip.on {
+  background-color: #2b6e44;
+  color: #ffffff;
+  border-color: #2b6e44;
+}
+
+/* --- TARJETAS DE PRODUCTO --- */
+.catalogo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.prod {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #eef2f0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.prod:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.prod .slot {
+  width: 100%;
+  height: 150px;
+  background-color: #fff9e6;
+  border: 2px dashed #f5d688;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.prod .slot.ok {
+  background-color: #ffffff;
+  border: none;
+}
+
+.prod .slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.prod-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.prod-body .cat {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #e06d20;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.prod-body h3 {
+  font-size: 0.95rem;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.35;
+}
+
+.pres-badge {
+  display: inline-block;
+  align-self: flex-start;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.prod-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #e5e7eb;
+}
+
+.prod-foot .precio {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2b6e44;
+}
+
+.btn {
+  background-color: #e06d20;
+  color: #ffffff;
+  border: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #c85a13;
+}
