@@ -32,22 +32,78 @@ function obtenerMarca(nombre) {
   return encontrada || "Pulgas Pet";
 }
 
+// Las categorías "Perro" / "Gato" (o "Concentrado Perro" / "Concentrado Gato") en realidad son
+// una especie. Se mueven al filtro de especie y el producto queda en la categoría "Concentrado".
+const CATEGORIA_ESPECIE = /^(concentrado\s+)?(perros?|gatos?)$/;
+
+function separarEspecie(producto) {
+  const coincidencia = norm(producto.categoria).match(CATEGORIA_ESPECIE);
+  if (!coincidencia) return producto;
+
+  return {
+    ...producto,
+    categoria: "Concentrado",
+    especie: producto.especie || coincidencia[2].replace(/s$/, "")
+  };
+}
+
+// Lee texto CSV respetando comillas, comas y saltos de línea dentro de comillas y celdas vacías
+function parsearCsv(texto) {
+  const filas = [];
+  let fila = [];
+  let celda = "";
+  let entreComillas = false;
+
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i];
+
+    if (entreComillas) {
+      if (c === '"' && texto[i + 1] === '"') {
+        celda += '"';
+        i++;
+      } else if (c === '"') {
+        entreComillas = false;
+      } else {
+        celda += c;
+      }
+    } else if (c === '"') {
+      entreComillas = true;
+    } else if (c === ",") {
+      fila.push(celda);
+      celda = "";
+    } else if (c === "\n" || c === "\r") {
+      if (c === "\r" && texto[i + 1] === "\n") i++;
+      fila.push(celda);
+      celda = "";
+      filas.push(fila);
+      fila = [];
+    } else {
+      celda += c;
+    }
+  }
+
+  if (celda !== "" || fila.length) {
+    fila.push(celda);
+    filas.push(fila);
+  }
+
+  return filas.filter((f) => f.some((v) => v.trim() !== ""));
+}
+
 function csvAObjetos(csvTexto) {
-  const lineas = csvTexto.trim().split("\n");
-  if (lineas.length < 2) return [];
+  const filas = parsearCsv(csvTexto.replace(/^\uFEFF/, ""));
+  if (filas.length < 2) return [];
 
-  const cabeceras = lineas[0].split(",").map((c) => c.trim().toLowerCase());
+  const cabeceras = filas[0].map((c) => c.trim().toLowerCase());
 
-  return lineas.slice(1).map((linea) => {
-    const valores = linea.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || linea.split(",");
+  return filas.slice(1).map((valores) => {
     const prod = {};
 
     cabeceras.forEach((col, idx) => {
-      const val = (valores[idx] || "").trim().replace(/^"|"$/g, "");
-      prod[col] = val;
+      prod[col] = (valores[idx] || "").trim();
     });
 
-    return {
+    return separarEspecie({
       id: prod.id || norm(prod.nombre || "").replace(/\s+/g, "-"),
       nombre: prod.nombre || "Producto sin nombre",
       categoria: prod.categoria || "General",
@@ -59,7 +115,7 @@ function csvAObjetos(csvTexto) {
       descripcion: prod.descripcion || "",
       marca: prod.marca || "",
       especie: (prod.especie || "").toLowerCase()
-    };
+    });
   });
 }
 
