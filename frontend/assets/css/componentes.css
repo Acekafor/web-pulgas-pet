@@ -355,6 +355,7 @@
 .buscador-box input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.6rem;
+  font-family: inherit;
   font-size: 0.95rem;
   border: 1.5px solid #dcdcdc;
   border-radius: 24px;

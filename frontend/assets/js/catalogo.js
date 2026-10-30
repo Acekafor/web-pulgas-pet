@@ -184,9 +184,14 @@ export function iniciarCatalogo(productos, categorias) {
 
   const params = new URLSearchParams(window.location.search);
   const catUrl = params.get("cat");
+  const busquedaUrl = (params.get("q") || "").trim();
 
   const contFiltros = $("#filtros-cat") || $("#filtros");
   const contEspecies = $("#filtros-especie");
+
+  // Si llega desde el buscador del inicio (catalogo.html?q=...), se rellena el campo y se filtra
+  const campoBuscar = $("#buscar");
+  if (campoBuscar && busquedaUrl) campoBuscar.value = busquedaUrl;
 
   if (contFiltros) {
     const catEncontrada = categorias.find((c) => norm(c) === norm(catUrl));
@@ -217,8 +222,9 @@ export function iniciarCatalogo(productos, categorias) {
       : "todas";
 
     const filtrados = productos.filter((p) => {
-      const coincideTexto =
-        norm(p.nombre).includes(busqueda) || norm(p.descripcion || "").includes(busqueda);
+      const coincideTexto = [p.nombre, p.descripcion, p.categoria, p.marca].some((campo) =>
+        norm(campo).includes(busqueda)
+      );
       const coincideCat = catSeleccionada === "todas" || p.categoria === catSeleccionada;
 
       const espNorm = norm(p.especie || "");
