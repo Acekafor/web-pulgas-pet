@@ -1,5 +1,3 @@
-// frontend/assets/js/utils.js
-
 // Seleccionar un único elemento del DOM
 export const $ = (sel, padre = document) => (padre || document).querySelector(sel);
 
@@ -15,7 +13,7 @@ export const esc = (txt) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 
-// Normalizar texto: minúsculas, sin tildes ni acentos (útil para el buscador)
+// Normalizar texto: minúsculas, sin tildes ni acentos
 export const norm = (txt) =>
   String(txt ?? "")
     .toLowerCase()
@@ -23,7 +21,7 @@ export const norm = (txt) =>
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
-// Convertir nombres de productos o categorías a slugs de URL limpios
+// Convertir nombres a slugs limpios
 export const slug = (txt) =>
   norm(txt)
     .replace(/[^a-z0-9\s-]/g, "")

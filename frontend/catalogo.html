@@ -40,20 +40,29 @@
 
     <main class="sec">
       <div class="wrap">
-        <!-- Barra alineada: Buscador + Filtro de Categorías -->
+        <!-- Barra de herramientas: Buscador + Especies + Categorías -->
         <div class="catalogo-toolbar">
           <div class="buscar">
             <span class="buscar-icon">🔍</span>
             <input
               id="buscar"
-              placeholder="Busca un producto por nombre o categoría…"
+              placeholder="Busca un producto por nombre, marca o categoría…"
               aria-label="Buscar producto"
             />
           </div>
+
+          <!-- Filtro por Especie -->
+          <div class="filtros-especies" id="filtros-especie" aria-label="Filtrar por especie">
+            <button class="chip-especie on" data-especie="todas">🐾 Todos</button>
+            <button class="chip-especie" data-especie="perro">🐶 Perros</button>
+            <button class="chip-especie" data-especie="gato">🐱 Gatos</button>
+          </div>
+
+          <!-- Filtro por Categorías -->
           <div class="filtros" id="filtros-cat" aria-label="Filtrar por categoría"></div>
         </div>
 
-        <!-- Los productos se pintan aquí desde assets/js/catalogo.js -->
+        <!-- Productos renderizados -->
         <div class="grid" id="catalogo">
           <p class="vacio">Cargando catálogo...</p>
         </div>

@@ -4,6 +4,34 @@ import { $, $$, esc, norm } from "./utils.js";
 import { activarImagenes } from "./imagenes.js";
 import { agregar } from "./orden.js";
 
+// Identifica la marca basada en palabras clave sin modificar el nombre del producto
+function obtenerMarca(nombre) {
+  const marcas = [
+    "Hill's",
+    "Hills",
+    "Trixie",
+    "Rogz",
+    "Ferplast",
+    "Agility Gold",
+    "Max",
+    "CanAmor",
+    "Chunky",
+    "Monello",
+    "Petizoos",
+    "GigWi",
+    "Belly Treats",
+    "Pixie",
+    "Pedigree",
+    "Dog Chow",
+    "Cat Chow",
+    "DentiBrush",
+    "Playfull Dog",
+    "BR for Dog"
+  ];
+  const encontrada = marcas.find((m) => norm(nombre).includes(norm(m)));
+  return encontrada || "Pulgas Pet";
+}
+
 function csvAObjetos(csvTexto) {
   const lineas = csvTexto.trim().split("\n");
   if (lineas.length < 2) return [];
@@ -28,7 +56,9 @@ function csvAObjetos(csvTexto) {
       destacado: (prod.destacado || "").toLowerCase() === "si",
       agotado: (prod.agotado || "").toLowerCase() === "si",
       imagen: prod.imagen || "",
-      descripcion: prod.descripcion || ""
+      descripcion: prod.descripcion || "",
+      marca: prod.marca || "",
+      especie: (prod.especie || "").toLowerCase()
     };
   });
 }
@@ -54,13 +84,14 @@ export function categoriasDe(productos) {
 }
 
 function tarjetaProducto(p) {
-  const precioFormateado = p.precio ? `$${p.precio.toLocaleString("es-CO")}` : "Consultar";
   const esAgotado = p.agotado === true || p.agotado === "si" || p.disponible === false;
   const claseAgotado = esAgotado ? " prod-agotado" : "";
   const badgeAgotado = esAgotado ? '<span class="badge-agotado">Agotado</span>' : "";
   const botonAccion = esAgotado
     ? '<button class="btn btn-disabled" disabled>Agotado</button>'
     : `<button class="btn" data-add="${esc(p.id)}">Agregar</button>`;
+
+  const marcaText = p.marca || obtenerMarca(p.nombre);
 
   const presLabel =
     p.presentacion && p.presentacion.toLowerCase() !== "no"
@@ -71,11 +102,11 @@ function tarjetaProducto(p) {
     <div class="slot" data-img="${esc(p.imagen || "")}" data-desc="${esc(p.nombre)}"></div>
     ${badgeAgotado}
     <div class="prod-body">
-      <span class="cat">${esc(p.categoria)}</span>
+      <span class="marca">Por ${esc(marcaText)}</span>
       <h3>${esc(p.nombre)}</h3>
       ${presLabel}
       <div class="prod-foot">
-        <span class="precio">${precioFormateado}</span>
+        <span class="precio">Consultar</span>
         ${botonAccion}
       </div>
     </div>
@@ -95,16 +126,16 @@ export function iniciarCatalogo(productos, categorias) {
   const contCatalogo = $("#catalogo");
   if (!contCatalogo) return;
 
-  // 1. Obtener categoría desde parámetros de la URL (?cat=Snacks)
   const params = new URLSearchParams(window.location.search);
   const catUrl = params.get("cat");
 
   const contFiltros = $("#filtros-cat") || $("#filtros");
+  const contEspecies = $("#filtros-especie");
+
   if (contFiltros) {
     const catEncontrada = categorias.find((c) => norm(c) === norm(catUrl));
     const catInicial = catEncontrada || "todas";
 
-    // 2. Renderizar chips marcando 'on' al botón correspondiente
     contFiltros.innerHTML = `<button class="chip ${catInicial === "todas" ? "on" : ""}" data-cat="todas">Todas</button>${categorias
       .map((c) => {
         const esActiva = norm(c) === norm(catInicial);
@@ -112,7 +143,6 @@ export function iniciarCatalogo(productos, categorias) {
       })
       .join("")}`;
 
-    // 3. Desplazar suavemente el scroll hacia el chip activo
     if (catEncontrada) {
       setTimeout(() => {
         const chipActivo = contFiltros.querySelector(".chip.on");
@@ -126,25 +156,46 @@ export function iniciarCatalogo(productos, categorias) {
     const catSeleccionada = contFiltros
       ? contFiltros.querySelector(".chip.on")?.dataset.cat || "todas"
       : "todas";
+    const especieSeleccionada = contEspecies
+      ? contEspecies.querySelector(".chip-especie.on")?.dataset.especie || "todas"
+      : "todas";
 
     const filtrados = productos.filter((p) => {
       const coincideTexto =
         norm(p.nombre).includes(busqueda) || norm(p.descripcion || "").includes(busqueda);
       const coincideCat = catSeleccionada === "todas" || p.categoria === catSeleccionada;
-      return coincideTexto && coincideCat;
+
+      const espNorm = norm(p.especie || "");
+      const catNorm = norm(p.categoria || "");
+      const esDeEspecie =
+        especieSeleccionada === "todas" ||
+        espNorm === "" ||
+        espNorm === especieSeleccionada ||
+        catNorm.includes(especieSeleccionada);
+
+      return coincideTexto && coincideCat && esDeEspecie;
     });
 
     contCatalogo.innerHTML = filtrados.length
       ? filtrados.map(tarjetaProducto).join("")
-      : '<p class="vacio">No se encontraron productos en esta categoría.</p>';
+      : '<p class="vacio">No se encontraron productos para los filtros seleccionados.</p>';
 
     activarImagenes(contCatalogo);
   }
 
   $("#buscar")?.addEventListener("input", filtrar);
+
   contFiltros?.addEventListener("click", (e) => {
     if (e.target.classList.contains("chip")) {
       $$(".chip", contFiltros).forEach((c) => c.classList.remove("on"));
+      e.target.classList.add("on");
+      filtrar();
+    }
+  });
+
+  contEspecies?.addEventListener("click", (e) => {
+    if (e.target.classList.contains("chip-especie")) {
+      $$(".chip-especie", contEspecies).forEach((c) => c.classList.remove("on"));
       e.target.classList.add("on");
       filtrar();
     }
@@ -160,6 +211,5 @@ export function iniciarCatalogo(productos, categorias) {
     }
   });
 
-  // 4. Filtrar la vista con la categoría preseleccionada
   filtrar();
 }
