@@ -1,186 +1,147 @@
-import { CATALOGO, CATEGORIAS } from "./config.js";
+import { SHEET_URL } from "./config.js";
 import { PRODUCTOS_RESPALDO } from "../../data/productos-respaldo.js";
-import { $, norm, slug, esc } from "./utils.js";
+import { $, $$, esc, norm } from "./utils.js";
 import { activarImagenes } from "./imagenes.js";
 import { agregar } from "./orden.js";
 
-/* ===== Obtención de datos (la única parte que cambia al conectar Node) ===== */
+// Parser de CSV a Objetos JavaScript
+function csvAObjetos(csvTexto) {
+  const lineas = csvTexto.trim().split("\n");
+  if (lineas.length < 2) return [];
 
-function parseCSV(texto) {
-  const filas = [];
-  let fila = [],
-    celda = "",
-    comillas = false;
-  for (let i = 0; i < texto.length; i++) {
-    const c = texto[i];
-    if (comillas) {
-      if (c === '"') {
-        if (texto[i + 1] === '"') {
-          celda += '"';
-          i++;
-        } else comillas = false;
-      } else celda += c;
-    } else if (c === '"') comillas = true;
-    else if (c === ",") {
-      fila.push(celda);
-      celda = "";
-    } else if (c === "\n") {
-      fila.push(celda);
-      filas.push(fila);
-      fila = [];
-      celda = "";
-    } else if (c !== "\r") celda += c;
-  }
-  if (celda || fila.length) {
-    fila.push(celda);
-    filas.push(fila);
-  }
-  return filas;
-}
+  const cabeceras = lineas[0].split(",").map((c) => c.trim().toLowerCase());
 
-// Columnas de la hoja: nombre, categoria, presentaciones (separadas por ;), nota, imagen, destacado, disponible
-function desdeCSV(texto) {
-  const [cabecera, ...filas] = parseCSV(texto);
-  const claves = cabecera.map(norm);
-  const lista = filas
-    .map((f) => Object.fromEntries(claves.map((k, i) => [k, (f[i] || "").trim()])))
-    .filter((o) => o.nombre && norm(o.disponible) !== "no")
-    .map((o) => ({
-      id: slug(o.nombre),
-      nombre: o.nombre,
-      categoria: o.categoria || "Otros",
-      presentaciones: o.presentaciones
-        ? o.presentaciones
-            .split(";")
-            .map((v) => v.trim())
-            .filter(Boolean)
-        : [],
-      nota: o.nota,
-      imagen: CATALOGO.rutaImagenes + (o.imagen || `${slug(o.nombre)}.jpg`),
-      destacado: norm(o.destacado) === "si",
-      disponible: true
-    }));
-  if (!lista.length) throw new Error("La hoja no tiene productos");
-  return lista;
+  return lineas.slice(1).map((linea) => {
+    const valores = linea.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || linea.split(",");
+    const prod = {};
+
+    cabeceras.forEach((col, idx) => {
+      let val = (valores[idx] || "").trim().replace(/^"|"$/g, "");
+      prod[col] = val;
+    });
+
+    return {
+      id: prod.id || norm(prod.nombre || "").replace(/\s+/g, "-"),
+      nombre: prod.nombre || "Producto sin nombre",
+      categoria: prod.categoria || "General",
+      precio: Number(prod.precio) || 0,
+      presentacion: prod.presentacion || "",
+      destacado: (prod.destacado || "").toLowerCase() === "si",
+      agotado: (prod.agotado || "").toLowerCase() === "si",
+      imagen: prod.imagen || "",
+      descripcion: prod.descripcion || ""
+    };
+  });
 }
 
 export async function obtenerProductos() {
+  if (!SHEET_URL) return PRODUCTOS_RESPALDO;
+
   try {
-    if (CATALOGO.apiUrl) {
-      const r = await fetch(`${CATALOGO.apiUrl}/productos`);
-      if (!r.ok) throw new Error(`API ${r.status}`);
-      return (await r.json()).filter((p) => p.disponible !== false);
-    }
-    if (CATALOGO.csvUrl) {
-      const r = await fetch(CATALOGO.csvUrl, { cache: "no-store" });
-      if (!r.ok) throw new Error(`Sheets ${r.status}`);
-      return desdeCSV(await r.text());
-    }
-  } catch (e) {
-    console.warn("Se usa el catálogo de respaldo:", e);
+    const res = await fetch(SHEET_URL);
+    if (!res.ok) throw new Error("Error al obtener la hoja de cálculo");
+    const textoCsv = await res.text();
+    const productos = csvAObjetos(textoCsv);
+    return productos.length ? productos : PRODUCTOS_RESPALDO;
+  } catch (error) {
+    console.warn("Error al cargar Google Sheets, usando respaldo local:", error);
+    return PRODUCTOS_RESPALDO;
   }
-  return PRODUCTOS_RESPALDO;
 }
 
-// Categorías conocidas en orden, más las nuevas que aparezcan en los datos.
-export const categoriasDe = (productos) => [
-  ...CATEGORIAS,
-  ...new Set(productos.map((p) => p.categoria).filter((c) => !CATEGORIAS.includes(c)))
-];
-
-/* ===== Vista ===== */
-
-function tarjeta(p) {
-  const pres = p.presentaciones || [];
-  const selector =
-    pres.length > 1
-      ? `<select aria-label="Presentación de ${esc(p.nombre)}">${pres.map((v) => `<option>${esc(v)}</option>`).join("")}</select>`
-      : "";
-  return `<article class="prod" data-id="${esc(p.id)}">
-    <div class="slot sq" data-img="${esc(p.imagen)}" data-desc="Foto: ${esc(p.nombre)}"></div>
-    <small>${esc(p.categoria)}</small><h3>${esc(p.nombre)}</h3>
-    ${p.nota ? `<p class="vars">${esc(p.nota)}</p>` : ""}${selector}
-    <div class="pie"><div class="cant"><button type="button" data-m="-1" aria-label="Menos">−</button><output>1</output><button type="button" data-m="1" aria-label="Más">+</button></div>
-    <button type="button" class="btn v" data-add>Agregar</button></div></article>`;
+export function categoriasDe(productos) {
+  const cats = new Set(productos.map((p) => p.categoria).filter(Boolean));
+  return Array.from(cats).sort();
 }
 
-function pintar(destino, lista) {
-  destino.innerHTML = lista.length
-    ? lista.map(tarjeta).join("")
-    : '<p class="vacio">No encontramos productos con esa búsqueda.</p>';
-  activarImagenes(destino);
-  destino.onclick = (e) => {
-    const b = e.target.closest("button");
-    const art = b && b.closest(".prod");
-    if (!art) return;
-    const salida = $("output", art);
-    if (b.dataset.m) {
-      salida.textContent = Math.max(1, Math.min(99, +salida.textContent + +b.dataset.m));
-      return;
-    }
-    if (b.hasAttribute("data-add")) {
-      const producto = lista.find((p) => String(p.id) === art.dataset.id);
-      const selector = $("select", art);
-      const presentacion = selector ? selector.value : (producto.presentaciones || [])[0] || "";
-      agregar(producto, presentacion, +salida.textContent);
-      salida.textContent = 1;
-      b.textContent = "✔ Agregado";
-      setTimeout(() => (b.textContent = "Agregar"), 1200);
-    }
-  };
+// Plantilla HTML de la tarjeta de producto
+function tarjetaProducto(p) {
+  const precioFormateado = p.precio ? `$${p.precio.toLocaleString("es-CO")}` : "Consultar";
+  
+  const esAgotado = p.agotado === true || p.agotado === "si" || p.disponible === false;
+  const claseAgotado = esAgotado ? " prod-agotado" : "";
+  const badgeAgotado = esAgotado ? '<span class="badge-agotado">Agotado</span>' : "";
+  const botonAccion = esAgotado
+    ? '<button class="btn btn-disabled" disabled>Agotado</button>'
+    : `<button class="btn" data-add="${esc(p.id)}">Agregar</button>`;
+
+  const presentacionTexto = p.presentacion || (Array.isArray(p.presentaciones) ? p.presentaciones.join(", ") : "");
+  const descTexto = p.descripcion || p.nota || presentacionTexto || "";
+
+  return `<article class="prod${claseAgotado}" data-id="${esc(p.id)}">
+    <div class="slot" data-img="${esc(p.imagen || "")}" data-desc="${esc(p.nombre)}"></div>
+    ${badgeAgotado}
+    <div class="prod-body">
+      <span class="cat">${esc(p.categoria)}</span>
+      <h3>${esc(p.nombre)}</h3>
+      <p class="desc">${esc(descTexto)}</p>
+      <div class="prod-foot">
+        <span class="precio">${precioFormateado}</span>
+        ${botonAccion}
+      </div>
+    </div>
+  </article>`;
 }
 
-// Página catalogo.html
+export function iniciarInicio(productos) {
+  const contDestacados = $("#destacados");
+  if (!contDestacados) return;
+
+  const destacados = productos.filter((p) => p.destacado);
+  contDestacados.innerHTML = destacados.map(tarjetaProducto).join("");
+  activarImagenes(contDestacados);
+}
+
 export function iniciarCatalogo(productos, categorias) {
-  const caja = $("#catalogo");
-  if (!caja) return;
-  const q = new URLSearchParams(location.search);
-  let cat = q.get("cat") || "Todos";
-  let texto = norm(q.get("q"));
-  const filtros = $("#filtros");
-  const buscador = $("#buscar");
-  buscador.value = q.get("q") || "";
+  const contCatalogo = $("#catalogo");
+  if (!contCatalogo) return;
 
-  const dibujar = () => {
-    filtros.innerHTML = ["Todos", ...categorias]
-      .map((c) => `<button type="button" class="${c === cat ? "on" : ""}">${esc(c)}</button>`)
-      .join("");
-    pintar(
-      caja,
-      productos.filter(
-        (p) => (cat === "Todos" || p.categoria === cat) && norm(p.nombre).includes(texto)
-      )
-    );
-  };
-  filtros.onclick = (e) => {
-    if (e.target.tagName === "BUTTON") {
-      cat = e.target.textContent;
-      dibujar();
-    }
-  };
-  buscador.oninput = () => {
-    texto = norm(buscador.value);
-    dibujar();
-  };
-  dibujar();
-}
-
-// Página index.html: destacados y categorías
-export function iniciarInicio(productos, categorias) {
-  const destacados = $("#destacados");
-  if (destacados)
-    pintar(
-      destacados,
-      productos.filter((p) => p.destacado)
-    );
-  const cats = $("#categorias");
-  if (cats) {
-    cats.innerHTML = categorias
-      .map(
-        (n, i) =>
-          `<a href="catalogo.html?cat=${encodeURIComponent(n)}"><div class="slot rd" data-img="assets/img/banners/categoria-${i + 1}.jpg" data-desc="Categoría: ${esc(n)}"></div>${esc(n)}</a>`
-      )
-      .join("");
-    activarImagenes(cats);
+  const contFiltros = $("#filtros-cat");
+  if (contFiltros) {
+    contFiltros.innerHTML = `<button class="chip on" data-cat="todas">Todas</button>${categorias
+      .map((c) => `<button class="chip" data-cat="${esc(c)}">${esc(c)}</button>`)
+      .join("")}`;
   }
+
+  function filtrar() {
+    const busqueda = norm($("#buscar")?.value || "");
+    const catSeleccionada = contFiltros
+      ? contFiltros.querySelector(".chip.on")?.dataset.cat || "todas"
+      : "todas";
+
+    const filtrados = productos.filter((p) => {
+      const descBusqueda = p.descripcion || p.nota || "";
+      const coincideTexto = norm(p.nombre).includes(busqueda) || norm(descBusqueda).includes(busqueda);
+      const coincideCat = catSeleccionada === "todas" || p.categoria === catSeleccionada;
+      return coincideTexto && coincideCat;
+    });
+
+    contCatalogo.innerHTML = filtrados.length
+      ? filtrados.map(tarjetaProducto).join("")
+      : '<p class="vacio">No se encontraron productos.</p>';
+
+    activarImagenes(contCatalogo);
+  }
+
+  $("#buscar")?.addEventListener("input", filtrar);
+  contFiltros?.addEventListener("click", (e) => {
+    if (e.target.classList.contains("chip")) {
+      $$(".chip", contFiltros).forEach((c) => c.classList.remove("on"));
+      e.target.classList.add("on");
+      filtrar();
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-add]");
+    if (btn) {
+      const prod = productos.find((p) => p.id === btn.dataset.add);
+      const pres = prod.presentacion || (Array.isArray(prod.presentaciones) ? prod.presentaciones[0] : "");
+      if (prod && !prod.agotado && prod.disponible !== false) {
+        agregar(prod, pres || "", 1);
+      }
+    }
+  });
+
+  filtrar();
 }

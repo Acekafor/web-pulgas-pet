@@ -24,13 +24,16 @@ export function guardarOrden(orden) {
   actualizarContador();
 }
 
-export function agregar(producto, presentacion, cant) {
+export function agregar(producto, presentacion = "", cant = 1) {
   const orden = leerOrden();
   const existente = orden.find((i) => i.id === producto.id && i.presentacion === presentacion);
   if (existente) existente.cant = Math.min(99, existente.cant + cant);
   else orden.push({ id: producto.id, nombre: producto.nombre, presentacion, cant });
   guardarOrden(orden);
 }
+
+// Alias para mantener compatibilidad
+export { agregar as agregarAlCarrito };
 
 // Página orden.html
 export function iniciarOrden() {
@@ -68,7 +71,6 @@ export function iniciarOrden() {
     e.preventDefault();
     const orden = leerOrden();
     if (!orden.length) return;
-    // Futuro: aquí se puede registrar la orden en el backend (POST {apiUrl}/ordenes) antes de abrir WhatsApp.
     abrirWhatsApp(mensajeOrden(orden, form.nombre.value, form.nota.value.trim()));
   };
 

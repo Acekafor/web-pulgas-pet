@@ -21,24 +21,16 @@ export const CATEGORIAS = [
   "Snacks",
   "Juguetes",
   "Accesorios",
-  "Ropa",
-  "Camas y jaulas",
   "Antipulgas y salud",
   "Artículos de aseo",
   "Servicios"
 ];
 
-// Fuente del catálogo, en orden de prioridad:
-// 1. apiUrl: backend Node (futuro). Debe responder GET {apiUrl}/productos con el mismo formato.
-// 2. csvUrl: hoja de Google Sheets publicada como CSV.
-// 3. Respaldo local: data/productos-respaldo.js
-export const CATALOGO = {
-  apiUrl: "",
-  csvUrl: "",
-  rutaImagenes: "assets/img/productos/"
-};
+// Enlace publicado de Google Sheets como CSV para el catálogo dinámico
+export const SHEET_URL = "https://docs.google.com/spreadsheets/d/1bJHgD95Dn-uJuLIU9fPQ-9u1Yg_RR5gq_XqSuAybkD4/export?format=csv";
 
-// true = los espacios de imagen vacíos muestran su ruta. Ponlo en false al publicar.
+// false = oculta rutas de prueba en las imágenes. Ponlo en false para producción.
 export const MOSTRAR_ETIQUETAS = true;
 
+// Clave de almacenamiento local para mantener los productos del carrito
 export const LLAVE_ORDEN = "pp_orden";

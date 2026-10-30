@@ -306,3 +306,29 @@
     max-height: 220px;
   }
 }
+
+/* Estado del producto agotado e insignia */
+.prod.prod-agotado {
+  opacity: 0.75;
+}
+
+.badge-agotado {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #d9534f;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.btn-disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  border-color: #ccc !important;
+}
