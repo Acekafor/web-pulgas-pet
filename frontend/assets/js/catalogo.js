@@ -95,11 +95,30 @@ export function iniciarCatalogo(productos, categorias) {
   const contCatalogo = $("#catalogo");
   if (!contCatalogo) return;
 
+  // 1. Obtener categoría desde parámetros de la URL (?cat=Snacks)
+  const params = new URLSearchParams(window.location.search);
+  const catUrl = params.get("cat");
+
   const contFiltros = $("#filtros-cat") || $("#filtros");
   if (contFiltros) {
-    contFiltros.innerHTML = `<button class="chip on" data-cat="todas">Todas</button>${categorias
-      .map((c) => `<button class="chip" data-cat="${esc(c)}">${esc(c)}</button>`)
+    const catEncontrada = categorias.find((c) => norm(c) === norm(catUrl));
+    const catInicial = catEncontrada || "todas";
+
+    // 2. Renderizar chips marcando 'on' al botón correspondiente
+    contFiltros.innerHTML = `<button class="chip ${catInicial === "todas" ? "on" : ""}" data-cat="todas">Todas</button>${categorias
+      .map((c) => {
+        const esActiva = norm(c) === norm(catInicial);
+        return `<button class="chip ${esActiva ? "on" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`;
+      })
       .join("")}`;
+
+    // 3. Desplazar suavemente el scroll hacia el chip activo
+    if (catEncontrada) {
+      setTimeout(() => {
+        const chipActivo = contFiltros.querySelector(".chip.on");
+        chipActivo?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }, 100);
+    }
   }
 
   function filtrar() {
@@ -125,7 +144,7 @@ export function iniciarCatalogo(productos, categorias) {
   $("#buscar")?.addEventListener("input", filtrar);
   contFiltros?.addEventListener("click", (e) => {
     if (e.target.classList.contains("chip")) {
-      $$(".chip", contFiltros, e.currentTarget).forEach((c) => c.classList.remove("on"));
+      $$(".chip", contFiltros).forEach((c) => c.classList.remove("on"));
       e.target.classList.add("on");
       filtrar();
     }
@@ -141,5 +160,6 @@ export function iniciarCatalogo(productos, categorias) {
     }
   });
 
+  // 4. Filtrar la vista con la categoría preseleccionada
   filtrar();
 }

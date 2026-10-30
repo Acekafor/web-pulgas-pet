@@ -22,3 +22,10 @@ export const norm = (txt) =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
+
+// Convertir nombres de productos o categorías a slugs de URL limpios
+export const slug = (txt) =>
+  norm(txt)
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");

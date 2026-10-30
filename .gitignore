@@ -31,3 +31,8 @@ Thumbs.db
 # Directorios de compilación o pruebas
 dist/
 coverage/
+node_modules/
+dist/
+*.zip
+test-results/
+playwright-report/
