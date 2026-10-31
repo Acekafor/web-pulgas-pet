@@ -48,6 +48,27 @@
   border-radius: 50%;
 }
 
+/* Imagen ya cargada: el espacio se adapta a la proporción real de la foto
+   (sin recortes). Mientras carga, el espacio conserva su proporción de reserva
+   (.sq / .wide / .tall) para que la página no salte. */
+.slot.ok:is(.sq, .wide, .tall) {
+  aspect-ratio: auto !important;
+  max-height: none !important;
+  display: block;
+  --slot-max: 520px;
+}
+.slot.ok:is(.sq, .wide, .tall) img {
+  width: 100%;
+  height: auto;
+  max-height: var(--slot-max);
+  object-fit: contain;
+}
+@media (max-width: 760px) {
+  .slot.ok:is(.sq, .wide, .tall) {
+    --slot-max: 320px;
+  }
+}
+
 /* Tarjeta de producto */
 .prod {
   display: flex;

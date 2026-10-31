@@ -63,6 +63,18 @@
   gap: 1rem;
   align-items: stretch;
 }
+.trio .slot.ok {
+  align-self: center;
+}
+.hero .slot.ok,
+.frase .slot.ok,
+.promo .slot.ok,
+.cols .slot.ok {
+  align-self: center;
+}
+.galeria {
+  align-items: center;
+}
 .card-v {
   background: var(--osc);
   color: #fff;
