@@ -4,7 +4,14 @@ import { activarImagenes } from "./imagenes.js";
 import { pintarHorario } from "./horario.js";
 import { urlWhatsApp, activarEnlacesWhatsApp, iniciarFormularioContacto } from "./whatsapp.js";
 import { actualizarContador, iniciarOrden } from "./orden.js";
-import { obtenerProductos, categoriasDe, iniciarCatalogo, iniciarInicio } from "./catalogo.js";
+import {
+  obtenerProductos,
+  categoriasDe,
+  iniciarCatalogo,
+  iniciarInicio,
+  activarAgregar,
+  activarDetalle
+} from "./catalogo.js";
 
 /* ===== Registrar Service Worker (PWA) ===== */
 
@@ -66,6 +73,8 @@ async function iniciar() {
     const categorias = categoriasDe(productos);
     iniciarInicio(productos, categorias);
     iniciarCatalogo(productos, categorias);
+    activarAgregar(productos);
+    activarDetalle(productos);
   }
 }
 

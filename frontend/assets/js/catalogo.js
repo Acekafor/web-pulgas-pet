@@ -2,7 +2,7 @@ import { SHEET_URL } from "./config.js";
 import { PRODUCTOS_RESPALDO } from "../../data/productos-respaldo.js";
 import { $, $$, esc, norm } from "./utils.js";
 import { activarImagenes } from "./imagenes.js";
-import { agregar } from "./orden.js";
+import { agregar, confirmarAgregado } from "./orden.js";
 
 // Identifica la marca basada en palabras clave sin modificar el nombre del producto
 function obtenerMarca(nombre) {
@@ -114,6 +114,7 @@ function csvAObjetos(csvTexto) {
       imagen: prod.imagen || "",
       descripcion: prod.descripcion || "",
       marca: prod.marca || "",
+      sabor: prod.sabor || "",
       especie: (prod.especie || "").toLowerCase()
     });
   });
@@ -162,7 +163,7 @@ function tarjetaProducto(p) {
       <h3>${esc(p.nombre)}</h3>
       ${presLabel}
       <div class="prod-foot">
-        <span class="precio">Consultar</span>
+        <button type="button" class="btn btn-consultar" data-info="${esc(p.id)}">Consultar</button>
         ${botonAccion}
       </div>
     </div>
@@ -176,6 +177,112 @@ export function iniciarInicio(productos) {
   const destacados = productos.filter((p) => p.destacado);
   contDestacados.innerHTML = destacados.map(tarjetaProducto).join("");
   activarImagenes(contDestacados);
+}
+
+// Separa los valores de una celda: "A; B | C" → ["A", "B", "C"] (también acepta arreglos)
+const separar = (valor) =>
+  (Array.isArray(valor) ? valor : String(valor ?? "").split(/[;|]/))
+    .map((v) => String(v).trim())
+    .filter((v) => v && v.toLowerCase() !== "no");
+
+function contenidoDetalle(p) {
+  const marca = p.marca || obtenerMarca(p.nombre);
+  const presentaciones = separar(p.presentaciones ?? p.presentacion);
+  const sabores = separar(p.sabor);
+  const descripcion = p.descripcion || p.nota || "";
+  const etiquetas = [p.categoria, p.especie].filter(Boolean);
+  const esAgotado = p.agotado === true || p.agotado === "si" || p.disponible === false;
+
+  const lista = (titulo, items) =>
+    items.length
+      ? `<h4>${titulo}</h4><ul class="detalle-lista">${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`
+      : "";
+
+  const hayDetalle = descripcion || presentaciones.length || sabores.length;
+
+  return `<div class="detalle-cuerpo">
+    <button type="button" class="detalle-x" data-cerrar aria-label="Cerrar">✕</button>
+    <div class="slot detalle-img" data-img="${esc(p.imagen || "")}" data-desc="${esc(p.nombre)}"></div>
+    <span class="marca">Por ${esc(marca)}</span>
+    <h3 id="detalle-titulo">${esc(p.nombre)}</h3>
+    ${etiquetas.length ? `<div class="detalle-tags">${etiquetas.map((t) => `<span class="pres-badge">${esc(t)}</span>`).join("")}</div>` : ""}
+    ${descripcion ? `<p class="detalle-desc">${esc(descripcion)}</p>` : ""}
+    ${lista("Presentaciones", presentaciones)}
+    ${lista("Sabores", sabores)}
+    ${hayDetalle ? "" : '<p class="detalle-desc">Pregúntanos por WhatsApp los detalles de este producto.</p>'}
+    <div class="detalle-acciones">
+      ${
+        esAgotado
+          ? '<button type="button" class="btn btn-disabled" disabled>Agotado</button>'
+          : `<button type="button" class="btn" data-add="${esc(p.id)}">Agregar a mi orden</button>`
+      }
+      <button type="button" class="btn btn-consultar" data-cerrar>Cerrar</button>
+    </div>
+  </div>`;
+}
+
+// Ventana emergente única, creada una sola vez (no requiere otro HTML)
+let dialogo = null;
+
+function obtenerDialogo() {
+  if (dialogo) return dialogo;
+
+  dialogo = document.createElement("dialog");
+  dialogo.id = "detalle-producto";
+  dialogo.className = "detalle";
+  dialogo.setAttribute("aria-labelledby", "detalle-titulo");
+
+  dialogo.addEventListener("click", (e) => {
+    // Clic en el fondo oscuro o en un botón de cerrar
+    if (e.target === dialogo || e.target.closest("[data-cerrar]")) dialogo.close();
+    // Al agregar desde la ventana, se deja ver el "✔ Agregado" y luego se cierra
+    else if (e.target.closest("[data-add]")) setTimeout(() => dialogo.close(), 700);
+  });
+
+  document.body.appendChild(dialogo);
+  return dialogo;
+}
+
+function abrirDetalle(producto) {
+  const d = obtenerDialogo();
+  d.innerHTML = contenidoDetalle(producto);
+  activarImagenes(d);
+  if (!d.open) d.showModal();
+}
+
+// Un único listener para el botón "Consultar" (inicio y catálogo)
+let detalleActivo = false;
+
+export function activarDetalle(productos) {
+  if (detalleActivo) return;
+  detalleActivo = true;
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-info]");
+    if (!btn) return;
+
+    const prod = productos.find((p) => p.id === btn.dataset.info);
+    if (prod) abrirDetalle(prod);
+  });
+}
+
+// Un único listener para todas las páginas (inicio y catálogo)
+let agregarActivo = false;
+
+export function activarAgregar(productos) {
+  if (agregarActivo) return;
+  agregarActivo = true;
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-add]");
+    if (!btn) return;
+
+    const prod = productos.find((p) => p.id === btn.dataset.add);
+    if (prod && !prod.agotado && prod.disponible !== false) {
+      agregar(prod, prod.presentacion || "", 1);
+      confirmarAgregado(prod, btn);
+    }
+  });
 }
 
 export function iniciarCatalogo(productos, categorias) {
@@ -260,16 +367,6 @@ export function iniciarCatalogo(productos, categorias) {
       $$(".chip-especie", contEspecies).forEach((c) => c.classList.remove("on"));
       e.target.classList.add("on");
       filtrar();
-    }
-  });
-
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-add]");
-    if (btn) {
-      const prod = productos.find((p) => p.id === btn.dataset.add);
-      if (prod && !prod.agotado && prod.disponible !== false) {
-        agregar(prod, prod.presentacion || "", 1);
-      }
     }
   });
 
