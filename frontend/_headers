@@ -15,7 +15,7 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
 
   # 6. Content Security Policy (CSP): Restringir qué scripts y recursos pueden ejecutarse
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://docs.google.com https://google.com;
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://docs.google.com https://google.com https://*.googleusercontent.com;
 
 # Caché para recursos estáticos
 /assets/img/*
