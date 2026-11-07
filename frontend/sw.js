@@ -1,4 +1,4 @@
-const CACHE_NAME = "pulgas-pet-v2";
+const CACHE_NAME = "pulgas-pet-v3";
 const RECURSOS_STATICOS = [
   "/",
   "/index.html",
